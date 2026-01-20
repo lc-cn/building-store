@@ -1,0 +1,11 @@
+node_modules/
+dist/
+build/
+.next/
+out/
+coverage/
+*.db
+*.sqlite
+*.sqlite3
+pnpm-lock.yaml
+.expo/

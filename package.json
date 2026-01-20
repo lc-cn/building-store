@@ -1,0 +1,50 @@
+{
+  "name": "building-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Building Materials Store - A monorepo for backend and frontend applications",
+  "scripts": {
+    "prepare": "husky install",
+    "dev": "pnpm --filter \"./packages/**\" --parallel dev",
+    "dev:backend": "pnpm --filter @building-store/backend dev",
+    "dev:admin": "pnpm --filter @building-store/admin dev",
+    "dev:mobile": "pnpm --filter @building-store/mobile dev",
+    "build": "pnpm --filter \"./packages/**\" build",
+    "build:backend": "pnpm --filter @building-store/backend build",
+    "build:admin": "pnpm --filter @building-store/admin build",
+    "build:mobile": "pnpm --filter @building-store/mobile build",
+    "lint": "pnpm --filter \"./packages/**\" lint",
+    "lint:fix": "pnpm --filter \"./packages/**\" lint:fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "test": "pnpm --filter \"./packages/**\" test",
+    "clean": "pnpm --filter \"./packages/**\" clean && rm -rf node_modules"
+  },
+  "keywords": [
+    "building-materials",
+    "e-commerce",
+    "monorepo",
+    "nestjs",
+    "nextjs",
+    "react-native"
+  ],
+  "author": "lc-cn",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
+  }
+}
