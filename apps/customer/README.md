@@ -2,18 +2,17 @@
 
 ## 应用说明
 
-应用端是面向终端消费者的在线购物平台，提供商品浏览、下单购买、订单管理等功能。支持 Web、移动端 H5 和小程序多端部署。
+应用端是基于 **React Native** 开发的移动应用，面向终端消费者提供在线购物功能。支持 iOS 和 Android 双平台。
 
 ## 技术栈
 
-- **前端框架**: React 18 / Vue 3 / Taro (多端)
-- **UI 组件库**: Ant Design Mobile / Vant
-- **状态管理**: Redux Toolkit / Pinia
-- **构建工具**: Vite / Webpack
+- **前端框架**: React Native 0.72
 - **开发语言**: TypeScript
+- **导航**: React Navigation (底部标签 + 堆栈导航)
 - **HTTP 客户端**: Axios
-- **路由**: React Router / Vue Router
-- **端口**: 3001
+- **状态管理**: Context API / Redux (可选)
+- **本地存储**: AsyncStorage
+- **图片选择**: react-native-image-picker
 
 ## 主要功能模块
 
@@ -83,27 +82,20 @@
 ```
 customer/
 ├── src/
-│   ├── assets/          # 静态资源
 │   ├── components/      # 公共组件
-│   ├── views/          # 页面视图
-│   │   ├── home/       # 首页
-│   │   ├── category/   # 分类
-│   │   ├── search/     # 搜索
-│   │   ├── product/    # 商品详情
-│   │   ├── cart/       # 购物车
-│   │   ├── order/      # 订单
-│   │   ├── user/       # 用户中心
-│   │   └── payment/    # 支付
-│   ├── router/         # 路由配置
-│   ├── store/          # 状态管理
-│   ├── api/            # API 接口
+│   ├── screens/        # 页面视图
+│   ├── navigation/     # 路由配置
+│   ├── services/       # API 接口
 │   ├── utils/          # 工具函数
 │   ├── types/          # TypeScript 类型定义
+│   ├── hooks/          # 自定义 Hooks
+│   ├── context/        # Context API
 │   └── App.tsx         # 根组件
-├── public/             # 公共资源
+├── android/            # Android 原生代码
+├── ios/                # iOS 原生代码
 ├── package.json        # 依赖配置
-├── vite.config.ts     # Vite 配置
 ├── tsconfig.json      # TypeScript 配置
+├── babel.config.js    # Babel 配置
 └── README.md          # 本文件
 ```
 
@@ -116,94 +108,69 @@ cd apps/customer
 npm install
 ```
 
-### 开发环境
+### iOS 开发
 
 ```bash
-# Web 端
-npm run dev
+# 安装 iOS 依赖
+cd ios && pod install && cd ..
 
-# H5 端
-npm run dev:h5
-
-# 微信小程序
-npm run dev:weapp
+# 运行 iOS 应用
+npm run ios
 ```
 
-访问: http://localhost:3001
-
-### 生产构建
+### Android 开发
 
 ```bash
-# Web 端
-npm run build
-
-# H5 端
-npm run build:h5
-
-# 微信小程序
-npm run build:weapp
+# 运行 Android 应用
+npm run android
 ```
 
-### 预览构建
+### 启动开发服务器
 
 ```bash
-npm run preview
+npm start
 ```
 
 ## 环境变量
 
-创建 `.env.local` 文件配置环境变量：
+创建 `.env` 文件配置环境变量：
 
 ```env
 # API 网关地址
-VITE_API_BASE_URL=http://localhost:8000/api/v1
-
-# CDN 地址
-VITE_CDN_URL=https://cdn.building-store.com
-
-# WebSocket 地址
-VITE_WS_URL=ws://localhost:8000/ws
-
-# 微信 AppId（小程序）
-VITE_WECHAT_APPID=your_wechat_appid
+API_BASE_URL=http://localhost:8000/api/v1
 ```
 
-## 多端适配
+## 构建发布
 
-应用端支持多端部署：
+### iOS 构建
 
-### Web 端
-- 响应式设计
-- PC 和移动端自适应
-- PWA 支持
+```bash
+cd ios
+xcodebuild -workspace BuildingStoreCustomer.xcworkspace -scheme BuildingStoreCustomer archive
+```
 
-### H5 端
-- 移动端优化
-- 微信内嵌浏览器适配
-- 分享功能
+### Android 构建
 
-### 小程序端
-- 微信小程序
-- 支付宝小程序
-- 抖音小程序
+```bash
+cd android
+./gradlew assembleRelease
+```
 
 ## 性能优化
 
-- 路由懒加载
 - 图片懒加载
-- 虚拟列表
-- 接口防抖节流
-- 本地缓存
-- CDN 加速
+- 列表虚拟化
+- 接口请求缓存
+- 本地数据缓存
+- 防抖和节流
 
 ## 用户体验
 
-- 骨架屏加载
 - 下拉刷新
 - 上拉加载更多
-- 页面过渡动画
+- 页面转场动画
+- 加载状态提示
 - 错误提示
-- 加载状态
 
 ## 开发规范
 
@@ -225,9 +192,7 @@ VITE_WECHAT_APPID=your_wechat_appid
 
 ## 安全措施
 
-- HTTPS 强制
 - Token 认证
 - 敏感信息加密
-- XSS 防护
-- CSRF 防护
 - 输入验证
+- HTTPS 通信

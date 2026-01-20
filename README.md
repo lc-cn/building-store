@@ -90,11 +90,11 @@ Building Store 是一个采用微服务架构设计的建筑材料在线商店�
 
 #### To B 管理端 (Admin Portal)
 
-**管理端 (admin)**
+**管理端 (admin)** - React Native 移动应用
 - 目录: `apps/admin/`
-- 功能: 面向商家和管理员的后台管理系统
-- 技术栈: React 18 / Vue 3 + Ant Design / Element Plus
-- 端口: 3000
+- 功能: 面向商家和管理员的移动端后台管理系统
+- 技术栈: **React Native 0.72** + TypeScript
+- 平台: iOS / Android
 
 主要功能：
 - 仪表盘：数据概览、销售统计、订单趋势
@@ -108,12 +108,11 @@ Building Store 是一个采用微服务架构设计的建筑材料在线商店�
 
 #### To C 应用端 (Customer App)
 
-**应用端 (customer)**
+**应用端 (customer)** - React Native 移动应用
 - 目录: `apps/customer/`
-- 功能: 面向终端消费者的在线购物平台
-- 技术栈: React 18 / Vue 3 / Taro (多端)
-- 端口: 3001
-- 支持: Web、H5、小程序多端部署
+- 功能: 面向终端消费者的移动端在线购物平台
+- 技术栈: **React Native 0.72** + TypeScript
+- 平台: iOS / Android
 
 主要功能：
 - 首页：轮播广告、分类导航、热门推荐、搜索
@@ -177,16 +176,14 @@ building-store/
 
 ## 技术栈
 
-### 前端应用
-- **框架**: React 18 / Vue 3 / Taro (多端)
-- **UI 组件库**: Ant Design / Element Plus / Vant
-- **状态管理**: Redux Toolkit / Pinia
-- **构建工具**: Vite / Webpack
+### 前端应用 (React Native)
+- **框架**: React Native 0.72
 - **开发语言**: TypeScript
+- **导航**: React Navigation
 - **HTTP 客户端**: Axios
-- **路由**: React Router / Vue Router
-- **样式**: Tailwind CSS / Less / Sass
-- **多端支持**: Web、H5、微信小程序、支付宝小程序
+- **状态管理**: Context API / Redux Toolkit (可选)
+- **本地存储**: AsyncStorage
+- **平台**: iOS / Android
 
 ### 后端服务
 - **开发语言**: Node.js (TypeScript) / Java (Spring Boot) / Go
@@ -269,25 +266,31 @@ npm install
 npm run dev
 
 # 启动前端应用
-# 管理端
+# 管理端 (React Native)
 cd apps/admin
 npm install
-npm run dev  # 访问 http://localhost:3000
+# iOS
+npm run ios
+# Android
+npm run android
 
-# 应用端
+# 应用端 (React Native)
 cd apps/customer
 npm install
-npm run dev  # 访问 http://localhost:3001
+# iOS
+npm run ios
+# Android
+npm run android
 ```
 
 ### 应用列表
 
-#### 前端应用
+#### 前端应用 (React Native)
 
-| 应用名称 | 目录 | 端口 | 说明 | 文档 |
+| 应用名称 | 目录 | 平台 | 说明 | 文档 |
 |---------|------|------|------|------|
-| 管理端 | `apps/admin/` | 3000 | To B 后台管理系统 | [文档](apps/admin/README.md) |
-| 应用端 | `apps/customer/` | 3001 | To C 在线购物平台 | [文档](apps/customer/README.md) |
+| 管理端 | `apps/admin/` | iOS / Android | To B 移动端后台管理系统 | [文档](apps/admin/README.md) |
+| 应用端 | `apps/customer/` | iOS / Android | To C 移动端在线购物平台 | [文档](apps/customer/README.md) |
 
 #### 后端服务
 
