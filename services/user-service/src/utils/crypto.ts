@@ -82,7 +82,8 @@ export async function generateToken(payload: any, secret: string, expiresIn: num
 function base64UrlEncode(input: string | Uint8Array): string {
   let str: string;
   if (typeof input === 'string') {
-    str = btoa(unescape(encodeURIComponent(input)));
+    const utf8Bytes = new TextEncoder().encode(input);
+    str = btoa(String.fromCharCode(...utf8Bytes));
   } else {
     str = btoa(String.fromCharCode(...input));
   }
@@ -97,7 +98,12 @@ function base64UrlDecode(input: string): string {
   while (str.length % 4) {
     str += '=';
   }
-  return decodeURIComponent(escape(atob(str)));
+  const binaryStr = atob(str);
+  const bytes = new Uint8Array(binaryStr.length);
+  for (let i = 0; i < binaryStr.length; i++) {
+    bytes[i] = binaryStr.charCodeAt(i);
+  }
+  return new TextDecoder().decode(bytes);
 }
 
 /**

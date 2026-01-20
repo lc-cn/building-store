@@ -1,12 +1,19 @@
 /**
- * 生成加密安全的随机数字
+ * 生成加密安全的随机数字（使用拒绝采样确保均匀分布）
  */
 function generateSecureRandomNumber(digits: number): string {
   const max = Math.pow(10, digits);
-  const array = new Uint32Array(1);
-  crypto.getRandomValues(array);
-  const randomNum = array[0] % max;
-  return randomNum.toString().padStart(digits, '0');
+  const range = Math.pow(2, 32);
+  const validRange = Math.floor(range / max) * max;
+  
+  let randomNum: number;
+  do {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    randomNum = array[0];
+  } while (randomNum >= validRange);
+  
+  return (randomNum % max).toString().padStart(digits, '0');
 }
 
 /**
