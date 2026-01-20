@@ -86,13 +86,55 @@ Building Store 是一个采用微服务架构设计的建筑材料在线商店�
    - 功能: 服务注册、服务发现、健康检查
    - 技术栈: Consul / Eureka / Nacos
 
+### 前端应用层 (Frontend Applications)
+
+#### To B 管理端 (Admin Portal)
+
+**管理端 (admin)**
+- 目录: `apps/admin/`
+- 功能: 面向商家和管理员的后台管理系统
+- 技术栈: React 18 / Vue 3 + Ant Design / Element Plus
+- 端口: 3000
+
+主要功能：
+- 仪表盘：数据概览、销售统计、订单趋势
+- 商品管理：商品 CRUD、分类管理、批量导入/导出
+- 订单管理：订单处理、状态更新、退款管理、物流跟踪
+- 用户管理：用户信息、权限管理、行为分析
+- 库存管理：库存查询、调整、预警
+- 营销管理：优惠券、促销活动、广告位
+- 财务管理：交易流水、对账、财务报表
+- 系统设置：角色权限、菜单配置、系统参数
+
+#### To C 应用端 (Customer App)
+
+**应用端 (customer)**
+- 目录: `apps/customer/`
+- 功能: 面向终端消费者的在线购物平台
+- 技术栈: React 18 / Vue 3 / Taro (多端)
+- 端口: 3001
+- 支持: Web、H5、小程序多端部署
+
+主要功能：
+- 首页：轮播广告、分类导航、热门推荐、搜索
+- 商品模块：分类浏览、商品详情、评价、收藏、分享
+- 搜索模块：关键词搜索、历史记录、热门搜索
+- 购物车：商品管理、数量调整、价格计算
+- 订单模块：下单、支付、订单跟踪、退款、评价
+- 用户中心：个人信息、地址管理、优惠券、收藏
+- 支付模块：微信支付、支付宝、银联、余额支付
+- 营销活动：秒杀、优惠券、满减活动
+
 ## Monorepo 仓库结构
 
-本项目采用 Monorepo 方式组织，所有微服务在同一个仓库中管理：
+本项目采用 Monorepo 方式组织，所有微服务和前端应用在同一个仓库中管理：
 
 ```
 building-store/
-├── services/                      # 所有微服务
+├── apps/                           # 前端应用
+│   ├── admin/                     # 管理端 (To B)
+│   └── customer/                  # 应用端 (To C)
+├── services/                      # 后端微服务
 │   ├── user-service/             # 用户服务
 │   ├── product-service/          # 产品服务
 │   ├── order-service/            # 订单服务
@@ -134,6 +176,17 @@ building-store/
 6. **重构便利**: 跨服务重构更加容易和安全
 
 ## 技术栈
+
+### 前端应用
+- **框架**: React 18 / Vue 3 / Taro (多端)
+- **UI 组件库**: Ant Design / Element Plus / Vant
+- **状态管理**: Redux Toolkit / Pinia
+- **构建工具**: Vite / Webpack
+- **开发语言**: TypeScript
+- **HTTP 客户端**: Axios
+- **路由**: React Router / Vue Router
+- **样式**: Tailwind CSS / Less / Sass
+- **多端支持**: Web、H5、微信小程序、支付宝小程序
 
 ### 后端服务
 - **开发语言**: Node.js (TypeScript) / Java (Spring Boot) / Go
@@ -210,13 +263,33 @@ cd building-store
 # 启动基础设施服务（数据库、缓存、消息队列等）
 docker compose -f docker/docker-compose.yml up -d
 
-# 进入具体服务目录开发
+# 启动后端服务（以用户服务为例）
 cd services/user-service
 npm install
 npm run dev
+
+# 启动前端应用
+# 管理端
+cd apps/admin
+npm install
+npm run dev  # 访问 http://localhost:3000
+
+# 应用端
+cd apps/customer
+npm install
+npm run dev  # 访问 http://localhost:3001
 ```
 
-### 服务列表
+### 应用列表
+
+#### 前端应用
+
+| 应用名称 | 目录 | 端口 | 说明 | 文档 |
+|---------|------|------|------|------|
+| 管理端 | `apps/admin/` | 3000 | To B 后台管理系统 | [文档](apps/admin/README.md) |
+| 应用端 | `apps/customer/` | 3001 | To C 在线购物平台 | [文档](apps/customer/README.md) |
+
+#### 后端服务
 
 | 服务名称 | 目录 | 端口 | 文档 |
 |---------|------|------|------|
