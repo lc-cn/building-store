@@ -9,9 +9,11 @@ id = "your-config-kv-id"
 preview_id = "your-preview-kv-id"
 
 # 环境变量（非敏感配置）
+# 注意：生产环境的敏感配置应使用 wrangler secret put 命令设置
 [vars]
-# 加密密钥（生产环境请使用 wrangler secret put ENCRYPTION_KEY）
-ENCRYPTION_KEY = "dev-encryption-key-32-chars!!"
+# 加密密钥占位符（开发环境可用，生产环境必须使用 Secret）
+# 生产环境设置: wrangler secret put ENCRYPTION_KEY
+ENCRYPTION_KEY = "dev-only-key-replace-in-prod!"
 
 # 生产环境配置
 [env.production]

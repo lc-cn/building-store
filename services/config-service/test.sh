@@ -7,8 +7,9 @@ set -e
 
 # 配置
 BASE_URL="${1:-http://localhost:8787}"
-ADMIN_TOKEN="admin-token"
-USER_TOKEN="user-token"
+# 从环境变量读取 token，如果未设置则使用默认值（仅用于本地测试）
+ADMIN_TOKEN="${TEST_ADMIN_TOKEN:-admin-token}"
+USER_TOKEN="${TEST_USER_TOKEN:-user-token}"
 
 # 颜色输出
 GREEN='\033[0;32m'

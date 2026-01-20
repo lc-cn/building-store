@@ -9,18 +9,27 @@ export function isValidEnvironment(env: string): env is Environment {
   return ['dev', 'test', 'prod'].includes(env);
 }
 
+# 验证配置键
+export const SERVICE_NAME_MIN_LENGTH = 2;
+export const SERVICE_NAME_MAX_LENGTH = 50;
+export const CONFIG_KEY_MAX_LENGTH = 100;
+
 /**
  * 验证服务名称
  */
 export function isValidServiceName(service: string): boolean {
-  return /^[a-z0-9-]+$/.test(service) && service.length >= 2 && service.length <= 50;
+  return /^[a-z0-9-]+$/.test(service) && 
+         service.length >= SERVICE_NAME_MIN_LENGTH && 
+         service.length <= SERVICE_NAME_MAX_LENGTH;
 }
 
 /**
  * 验证配置键
  */
 export function isValidConfigKey(key: string): boolean {
-  return /^[a-zA-Z0-9._-]+$/.test(key) && key.length >= 1 && key.length <= 100;
+  return /^[a-zA-Z0-9._-]+$/.test(key) && 
+         key.length >= 1 && 
+         key.length <= CONFIG_KEY_MAX_LENGTH;
 }
 
 /**
