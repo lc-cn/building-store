@@ -1,0 +1,9 @@
+# .dev.vars 示例
+# 本地开发环境变量配置
+# 复制此文件为 .dev.vars 并修改相应的值
+
+# JWT密钥（用于验证JWT令牌）
+JWT_SECRET=your-development-jwt-secret-key-change-this
+
+# 管理API密钥（用于访问管理接口）
+ADMIN_API_KEY=your-development-admin-api-key-change-this
