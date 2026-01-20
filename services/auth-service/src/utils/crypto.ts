@@ -49,7 +49,14 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 export function base64UrlEncode(str: string): string {
   const encoder = new TextEncoder();
   const data = encoder.encode(str);
-  const base64 = btoa(String.fromCharCode(...data));
+  
+  // 使用 reduce 避免 spread 操作符在大数据时的堆栈溢出
+  let binaryString = '';
+  for (let i = 0; i < data.length; i++) {
+    binaryString += String.fromCharCode(data[i]);
+  }
+  
+  const base64 = btoa(binaryString);
   return base64
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
@@ -106,7 +113,8 @@ export async function hmacSign(data: string, secret: string): Promise<string> {
  */
 export async function hmacVerify(data: string, signature: string, secret: string): Promise<boolean> {
   const computedSignature = await hmacSign(data, secret);
-  return computedSignature === signature;
+  // 使用时间安全的比较函数防止时序攻击
+  return timingSafeEqual(computedSignature, signature);
 }
 
 /**
