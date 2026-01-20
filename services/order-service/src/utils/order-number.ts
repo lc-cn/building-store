@@ -12,8 +12,10 @@ export function generateOrderNumber(): string {
   const day = String(now.getDate()).padStart(2, '0');
   const datePart = `${year}${month}${day}`;
   
-  // 生成6位随机数
-  const randomPart = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+  // 生成6位安全随机数
+  const randomArray = new Uint32Array(1);
+  crypto.getRandomValues(randomArray);
+  const randomPart = (randomArray[0] % 1000000).toString().padStart(6, '0');
   
   return `ORD${datePart}${randomPart}`;
 }
