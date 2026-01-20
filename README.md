@@ -1,0 +1,362 @@
+# Building Store - 建筑商店
+
+一个基于微服务架构的建筑材料电商平台
+
+## 项目概述
+
+Building Store 是一个采用微服务架构设计的建筑材料在线商店系统。本项目将后端服务拆分为多个独立的微服务，实现核心服务与边缘服务的解耦，提高系统的可维护性、可扩展性和可靠性。
+
+## 架构设计
+
+### 微服务架构原则
+
+1. **服务自治**: 每个微服务独立开发、部署和扩展
+2. **数据隔离**: 每个服务拥有独立的数据存储
+3. **接口标准化**: 使用RESTful API和gRPC进行服务间通信
+4. **容错设计**: 实现服务降级、熔断和限流机制
+5. **可观测性**: 统一的日志、监控和链路追踪
+
+### 服务分层
+
+#### 核心服务层 (Core Services)
+
+核心服务层包含业务核心逻辑，各服务独立存储在不同仓库中：
+
+1. **用户服务 (User Service)**
+   - 仓库: `building-store-user-service`
+   - 功能: 用户注册、登录、个人信息管理、权限管理
+   - 数据库: PostgreSQL
+   - 端口: 8001
+
+2. **产品服务 (Product Service)**
+   - 仓库: `building-store-product-service`
+   - 功能: 产品目录管理、分类管理、产品搜索、价格管理
+   - 数据库: PostgreSQL + Elasticsearch (搜索)
+   - 端口: 8002
+
+3. **订单服务 (Order Service)**
+   - 仓库: `building-store-order-service`
+   - 功能: 订单创建、订单状态管理、订单查询、订单历史
+   - 数据库: PostgreSQL
+   - 端口: 8003
+
+4. **库存服务 (Inventory Service)**
+   - 仓库: `building-store-inventory-service`
+   - 功能: 库存管理、库存预留、库存释放、库存同步
+   - 数据库: PostgreSQL + Redis (缓存)
+   - 端口: 8004
+
+5. **支付服务 (Payment Service)**
+   - 仓库: `building-store-payment-service`
+   - 功能: 支付处理、退款处理、支付回调、账单管理
+   - 数据库: PostgreSQL
+   - 端口: 8005
+
+#### 边缘服务层 (Edge Services)
+
+边缘服务层负责流量管理、安全认证等非业务核心功能：
+
+1. **API 网关 (API Gateway)**
+   - 仓库: `building-store-api-gateway`
+   - 功能: 路由转发、负载均衡、限流熔断、协议转换
+   - 技术栈: Kong / Nginx / Spring Cloud Gateway
+   - 端口: 8000
+
+2. **认证服务 (Auth Service)**
+   - 仓库: `building-store-auth-service`
+   - 功能: JWT令牌生成、令牌验证、OAuth2.0、单点登录
+   - 数据库: Redis (令牌存储)
+   - 端口: 8006
+
+3. **通知服务 (Notification Service)**
+   - 仓库: `building-store-notification-service`
+   - 功能: 邮件通知、短信通知、站内消息、推送通知
+   - 数据库: MongoDB
+   - 端口: 8007
+
+#### 基础设施服务 (Infrastructure Services)
+
+1. **配置中心 (Config Service)**
+   - 仓库: `building-store-config-service`
+   - 功能: 集中配置管理、动态配置更新
+   - 技术栈: Spring Cloud Config / Consul
+
+2. **服务注册与发现 (Service Registry)**
+   - 仓库: `building-store-service-registry`
+   - 功能: 服务注册、服务发现、健康检查
+   - 技术栈: Consul / Eureka / Nacos
+
+## 仓库结构
+
+本仓库作为微服务架构的主仓库，包含以下内容：
+
+```
+building-store/
+├── docs/                          # 架构文档
+│   ├── architecture.md           # 架构设计文档
+│   ├── api-design.md            # API设计规范
+│   ├── database-design.md       # 数据库设计
+│   ├── deployment.md            # 部署指南
+│   └── development.md           # 开发指南
+├── scripts/                      # 工具脚本
+│   ├── setup.sh                 # 环境搭建脚本
+│   └── deploy.sh                # 部署脚本
+├── docker/                       # Docker配置
+│   ├── docker-compose.yml       # 本地开发环境
+│   └── docker-compose.prod.yml  # 生产环境
+├── kubernetes/                   # K8s配置
+│   ├── namespace.yaml
+│   ├── services/                # 各服务的K8s配置
+│   └── ingress.yaml
+└── README.md                     # 本文件
+```
+
+## 技术栈
+
+### 后端服务
+- **开发语言**: Node.js (TypeScript) / Java (Spring Boot) / Go
+- **API框架**: Express / Spring Boot / Gin
+- **数据库**: PostgreSQL (主数据库)
+- **缓存**: Redis
+- **搜索**: Elasticsearch
+- **消息队列**: RabbitMQ / Kafka
+- **服务通信**: REST API / gRPC
+
+### 基础设施
+- **容器化**: Docker
+- **编排**: Kubernetes
+- **服务网格**: Istio (可选)
+- **API网关**: Kong / Nginx
+- **配置中心**: Consul / Nacos
+- **服务注册**: Consul / Eureka
+
+### 监控与日志
+- **日志**: ELK Stack (Elasticsearch + Logstash + Kibana)
+- **监控**: Prometheus + Grafana
+- **链路追踪**: Jaeger / Zipkin
+- **告警**: AlertManager
+
+## 服务间通信
+
+### 同步通信
+- **REST API**: 用于外部客户端和服务间的同步调用
+- **gRPC**: 用于内部服务间的高性能通信
+
+### 异步通信
+- **消息队列**: 用于事件驱动架构和异步处理
+  - 订单创建事件
+  - 库存变更事件
+  - 支付完成事件
+  - 通知事件
+
+### 通信模式
+1. **请求-响应**: API Gateway -> 各微服务
+2. **事件驱动**: 订单服务 -> 库存服务/支付服务/通知服务
+3. **发布-订阅**: 产品更新 -> 多个订阅服务
+
+## 数据管理策略
+
+### 数据库设计原则
+1. 每个服务拥有独立的数据库实例
+2. 服务间不直接访问其他服务的数据库
+3. 通过API或消息队列进行数据交互
+4. 实现最终一致性而非强一致性
+
+### 分布式事务
+采用 Saga 模式处理跨服务事务：
+- **编排式**: 订单服务作为编排器协调各服务
+- **事件驱动式**: 通过事件链实现分布式事务
+
+## 部署架构
+
+### 开发环境
+使用 Docker Compose 在本地运行所有服务
+
+### 生产环境
+- **容器编排**: Kubernetes
+- **负载均衡**: Nginx Ingress Controller
+- **自动扩展**: HPA (Horizontal Pod Autoscaler)
+- **服务网格**: Istio (提供流量管理、安全、可观测性)
+
+## 快速开始
+
+### 前置要求
+- Docker & Docker Compose
+- Node.js 18+ / Java 17+ / Go 1.20+
+- PostgreSQL 14+
+- Redis 7+
+
+### 本地开发环境搭建
+
+```bash
+# 克隆主仓库
+git clone https://github.com/lc-cn/building-store.git
+cd building-store
+
+# 运行环境搭建脚本
+./scripts/setup.sh
+
+# 启动基础设施服务（数据库、缓存、消息队列等）
+docker-compose up -d
+
+# 克隆和启动各个微服务（参见各服务仓库的README）
+```
+
+### 服务仓库列表
+
+| 服务名称 | 仓库地址 | 文档 |
+|---------|---------|------|
+| API Gateway | `lc-cn/building-store-api-gateway` | [文档](docs/services/api-gateway.md) |
+| User Service | `lc-cn/building-store-user-service` | [文档](docs/services/user-service.md) |
+| Product Service | `lc-cn/building-store-product-service` | [文档](docs/services/product-service.md) |
+| Order Service | `lc-cn/building-store-order-service` | [文档](docs/services/order-service.md) |
+| Inventory Service | `lc-cn/building-store-inventory-service` | [文档](docs/services/inventory-service.md) |
+| Payment Service | `lc-cn/building-store-payment-service` | [文档](docs/services/payment-service.md) |
+| Auth Service | `lc-cn/building-store-auth-service` | [文档](docs/services/auth-service.md) |
+| Notification Service | `lc-cn/building-store-notification-service` | [文档](docs/services/notification-service.md) |
+| Config Service | `lc-cn/building-store-config-service` | [文档](docs/services/config-service.md) |
+| Service Registry | `lc-cn/building-store-service-registry` | [文档](docs/services/service-registry.md) |
+
+## 开发规范
+
+### API 设计规范
+- 遵循 RESTful 设计原则
+- 使用统一的错误码和响应格式
+- API版本管理: `/api/v1/`
+- 详见 [API设计文档](docs/api-design.md)
+
+### 代码规范
+- 使用 ESLint / CheckStyle / golangci-lint
+- 提交前运行代码格式化工具
+- 编写单元测试和集成测试
+- 代码覆盖率要求 > 80%
+
+### Git 工作流
+- 使用 Git Flow 工作流
+- 分支命名规范: `feature/`, `bugfix/`, `hotfix/`
+- 提交信息规范: 遵循 Conventional Commits
+
+## 安全性
+
+### 认证与授权
+- JWT Bearer Token 认证
+- RBAC (基于角色的访问控制)
+- OAuth 2.0 支持
+
+### 数据安全
+- 敏感数据加密存储
+- HTTPS 强制使用
+- SQL 注入防护
+- XSS 攻击防护
+
+### 网络安全
+- API 限流
+- DDoS 防护
+- 服务间 mTLS 加密
+
+## 监控与运维
+
+### 监控指标
+- 服务健康状态
+- API 响应时间
+- 错误率
+- 吞吐量
+- 资源使用率
+
+### 日志管理
+- 结构化日志
+- 集中式日志收集
+- 日志级别管理
+- 日志保留策略
+
+### 告警策略
+- 服务不可用告警
+- 性能降级告警
+- 错误率阈值告警
+- 资源使用率告警
+
+## 性能优化
+
+### 缓存策略
+- Redis 多级缓存
+- CDN 静态资源缓存
+- 数据库查询缓存
+
+### 数据库优化
+- 索引优化
+- 读写分离
+- 分库分表
+
+### 服务优化
+- 连接池管理
+- 异步处理
+- 批量操作
+- 限流降级
+
+## 测试策略
+
+### 单元测试
+- 各服务独立单元测试
+- 覆盖率要求 > 80%
+
+### 集成测试
+- 服务间集成测试
+- API 端到端测试
+
+### 性能测试
+- 压力测试
+- 负载测试
+- 稳定性测试
+
+## 贡献指南
+
+欢迎贡献代码！请遵循以下步骤：
+
+1. Fork 相应的服务仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
+
+## 许可证
+
+本项目采用 MIT 许可证。详见 [LICENSE](LICENSE) 文件。
+
+## 联系方式
+
+- 项目维护者: lc-cn
+- 项目主页: https://github.com/lc-cn/building-store
+- 问题反馈: https://github.com/lc-cn/building-store/issues
+
+## 路线图
+
+### 第一阶段 (已完成)
+- [x] 架构设计
+- [x] 技术栈选型
+- [x] 仓库结构规划
+
+### 第二阶段 (进行中)
+- [ ] 创建各微服务仓库
+- [ ] 实现基础设施服务
+- [ ] 实现核心服务
+- [ ] 实现边缘服务
+
+### 第三阶段 (计划中)
+- [ ] 服务间通信实现
+- [ ] 分布式事务处理
+- [ ] 监控和日志系统
+- [ ] CI/CD 流程
+
+### 第四阶段 (计划中)
+- [ ] 性能优化
+- [ ] 安全加固
+- [ ] 文档完善
+- [ ] 生产环境部署
+
+## 更新日志
+
+### v0.1.0 (2026-01-20)
+- 初始化项目
+- 完成微服务架构设计
+- 规划服务拆分方案
+- 定义核心服务和边缘服务

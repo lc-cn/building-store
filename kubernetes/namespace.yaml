@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: building-store-prod
+  labels:
+    name: building-store-prod
+    environment: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: building-store-dev
+  labels:
+    name: building-store-dev
+    environment: development
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: building-store-test
+  labels:
+    name: building-store-test
+    environment: testing
