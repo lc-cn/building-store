@@ -23,5 +23,6 @@ app.delete('/coupons/:id', couponHandlers.delete);
 app.post('/coupons/:id/claim', couponHandlers.claim);
 app.post('/user-coupons/:userCouponId/use', couponHandlers.use);
 app.get('/users/:userId/coupons', couponHandlers.getUserCoupons);
+app.post('/coupons/distribute', couponHandlers.distribute); // 批量下发优惠券
 
 export default app;

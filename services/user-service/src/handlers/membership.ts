@@ -131,5 +131,144 @@ export const membershipCardHandlers = {
 
     await db.prepare(`UPDATE membership_cards SET status = ? WHERE id = ?`).bind(status, id).run();
     return c.json({ success: true, data: { id, status } });
+  },
+
+  // 查询会员卡余额
+  async getBalance(c: Context) {
+    const db = c.env.DB;
+    const id = c.req.param('id');
+
+    const card = await db.prepare(`
+      SELECT id, user_id, card_number, balance, status, expires_at
+      FROM membership_cards WHERE id = ?
+    `).bind(id).first();
+
+    if (!card) {
+      return c.json({ success: false, error: '会员卡不存在' }, 404);
+    }
+
+    return c.json({ success: true, data: card });
+  },
+
+  // 增加余额（后台充值/手动增加）
+  async addBalance(c: Context) {
+    const db = c.env.DB;
+    const id = c.req.param('id');
+    const body = await c.req.json();
+    const { amount, operator_id, remark } = body;
+
+    if (amount <= 0) {
+      return c.json({ success: false, error: '充值金额必须大于0' }, 400);
+    }
+
+    // 获取当前余额
+    const card = await db.prepare(`SELECT * FROM membership_cards WHERE id = ?`).bind(id).first();
+    if (!card) {
+      return c.json({ success: false, error: '会员卡不存在' }, 404);
+    }
+
+    const newBalance = (card.balance || 0) + amount;
+
+    // 更新余额
+    await db.prepare(`
+      UPDATE membership_cards SET balance = ? WHERE id = ?
+    `).bind(newBalance, id).run();
+
+    // 记录余额变动
+    await db.prepare(`
+      INSERT INTO membership_balance_logs (
+        card_id, user_id, type, amount, balance_before, balance_after, 
+        operator_id, remark, created_at
+      ) VALUES (?, ?, 'recharge', ?, ?, ?, ?, ?, ?)
+    `).bind(
+      id, card.user_id, amount, card.balance || 0, newBalance,
+      operator_id, remark || '后台充值', new Date().toISOString()
+    ).run();
+
+    return c.json({ 
+      success: true, 
+      data: { 
+        id, 
+        balance_before: card.balance || 0, 
+        balance_after: newBalance,
+        amount
+      } 
+    });
+  },
+
+  // 扣减余额（消费）
+  async deductBalance(c: Context) {
+    const db = c.env.DB;
+    const id = c.req.param('id');
+    const body = await c.req.json();
+    const { amount, order_id, remark } = body;
+
+    if (amount <= 0) {
+      return c.json({ success: false, error: '扣减金额必须大于0' }, 400);
+    }
+
+    // 获取当前余额
+    const card = await db.prepare(`SELECT * FROM membership_cards WHERE id = ?`).bind(id).first();
+    if (!card) {
+      return c.json({ success: false, error: '会员卡不存在' }, 404);
+    }
+
+    if (card.status !== 'active') {
+      return c.json({ success: false, error: '会员卡状态异常' }, 400);
+    }
+
+    const currentBalance = card.balance || 0;
+    if (currentBalance < amount) {
+      return c.json({ success: false, error: '余额不足' }, 400);
+    }
+
+    const newBalance = currentBalance - amount;
+
+    // 更新余额
+    await db.prepare(`
+      UPDATE membership_cards SET balance = ? WHERE id = ?
+    `).bind(newBalance, id).run();
+
+    // 记录余额变动
+    await db.prepare(`
+      INSERT INTO membership_balance_logs (
+        card_id, user_id, type, amount, balance_before, balance_after,
+        order_id, remark, created_at
+      ) VALUES (?, ?, 'consume', ?, ?, ?, ?, ?, ?)
+    `).bind(
+      id, card.user_id, amount, currentBalance, newBalance,
+      order_id, remark || '消费扣款', new Date().toISOString()
+    ).run();
+
+    return c.json({ 
+      success: true, 
+      data: { 
+        id, 
+        balance_before: currentBalance, 
+        balance_after: newBalance,
+        amount
+      } 
+    });
+  },
+
+  // 查询余额变动记录
+  async getBalanceLogs(c: Context) {
+    const db = c.env.DB;
+    const id = c.req.param('id');
+    const { type, page = 1, limit = 20 } = c.req.query();
+
+    let query = `SELECT * FROM membership_balance_logs WHERE card_id = ?`;
+    const params = [id];
+
+    if (type) {
+      query += ` AND type = ?`;
+      params.push(type);
+    }
+
+    query += ` ORDER BY created_at DESC LIMIT ? OFFSET ?`;
+    params.push(limit, (page - 1) * limit);
+
+    const { results } = await db.prepare(query).bind(...params).all();
+    return c.json({ success: true, data: results });
   }
 };

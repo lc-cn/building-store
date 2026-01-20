@@ -213,5 +213,57 @@ export const couponHandlers = {
 
     const { results } = await db.prepare(query).bind(...params).all();
     return c.json({ success: true, data: results });
+  },
+
+  // 下发优惠券（后台批量发送）
+  async distribute(c: Context) {
+    const db = c.env.DB;
+    const body = await c.req.json();
+    const { coupon_id, user_ids, send_to_all } = body;
+
+    // 验证优惠券存在
+    const coupon = await db.prepare(`SELECT * FROM coupons WHERE id = ?`).bind(coupon_id).first();
+    if (!coupon) {
+      return c.json({ success: false, error: '优惠券不存在' }, 404);
+    }
+
+    let targetUsers = [];
+    if (send_to_all) {
+      // 发送给所有用户
+      const { results } = await db.prepare(`SELECT id FROM users`).all();
+      targetUsers = results.map((u: any) => u.id);
+    } else {
+      // 发送给指定用户
+      targetUsers = user_ids || [];
+    }
+
+    if (targetUsers.length === 0) {
+      return c.json({ success: false, error: '没有目标用户' }, 400);
+    }
+
+    // 批量创建用户优惠券
+    let successCount = 0;
+    for (const userId of targetUsers) {
+      try {
+        await db.prepare(`
+          INSERT INTO user_coupons (user_id, coupon_id, status, received_at, expires_at)
+          VALUES (?, ?, 'unused', ?, ?)
+        `).bind(userId, coupon_id, new Date().toISOString(), coupon.end_date).run();
+        successCount++;
+      } catch (error) {
+        // 忽略重复领取等错误
+        console.error(`Failed to distribute coupon to user ${userId}:`, error);
+      }
+    }
+
+    return c.json({ 
+      success: true, 
+      message: '优惠券下发成功',
+      data: {
+        total: targetUsers.length,
+        success: successCount,
+        failed: targetUsers.length - successCount
+      }
+    });
   }
 };

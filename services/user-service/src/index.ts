@@ -115,4 +115,10 @@ app.post('/membership-cards', authMiddleware, membershipCardHandlers.create);
 app.post('/membership-cards/:id/renew', authMiddleware, membershipCardHandlers.renew);
 app.put('/membership-cards/:id/status', authMiddleware, membershipCardHandlers.updateStatus);
 
+// 会员卡余额管理路由
+app.get('/membership-cards/:id/balance', authMiddleware, membershipCardHandlers.getBalance);
+app.post('/membership-cards/:id/balance/add', authMiddleware, membershipCardHandlers.addBalance); // 后台充值
+app.post('/membership-cards/:id/balance/deduct', authMiddleware, membershipCardHandlers.deductBalance); // 消费扣款
+app.get('/membership-cards/:id/balance-logs', authMiddleware, membershipCardHandlers.getBalanceLogs); // 余额变动记录
+
 export default app;
