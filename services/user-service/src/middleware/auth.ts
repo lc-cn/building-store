@@ -16,8 +16,13 @@ export async function authMiddleware(c: Context<{ Bindings: Bindings }>, next: N
   
   const token = authorization.substring(7);
   
+  if (!c.env.JWT_SECRET) {
+    console.error('JWT_SECRET is not configured');
+    return c.json({ error: '服务器配置错误' }, 500);
+  }
+  
   try {
-    const payload = await verifyToken(token, c.env.JWT_SECRET || 'default-secret');
+    const payload = await verifyToken(token, c.env.JWT_SECRET);
     c.set('user', payload);
     await next();
   } catch (error) {

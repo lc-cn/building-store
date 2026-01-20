@@ -12,8 +12,12 @@ export async function loginHandler(c: Context<{ Bindings: Bindings }>) {
       return c.json({ error: 'Email and password are required' }, 400);
     }
 
-    const jwtSecret = c.env.JWT_SECRET || 'default-secret-key-change-in-production';
-    const authService = new AuthService(c.env.DB, jwtSecret);
+    if (!c.env.JWT_SECRET) {
+      console.error('JWT_SECRET is not configured');
+      return c.json({ error: '服务器配置错误' }, 500);
+    }
+
+    const authService = new AuthService(c.env.DB, c.env.JWT_SECRET);
     
     const result = await authService.login(email, password);
     
@@ -34,8 +38,11 @@ export async function assignRoleHandler(c: Context<{ Bindings: Bindings }>) {
       return c.json({ error: 'user_id and role_id are required' }, 400);
     }
 
-    const jwtSecret = c.env.JWT_SECRET || 'default-secret-key-change-in-production';
-    const authService = new AuthService(c.env.DB, jwtSecret);
+    if (!c.env.JWT_SECRET) {
+      return c.json({ error: '服务器配置错误' }, 500);
+    }
+
+    const authService = new AuthService(c.env.DB, c.env.JWT_SECRET);
     
     const success = await authService.assignRoleToUser(user_id, role_id);
     
@@ -57,8 +64,11 @@ export async function removeRoleHandler(c: Context<{ Bindings: Bindings }>) {
       return c.json({ error: 'user_id and role_id are required' }, 400);
     }
 
-    const jwtSecret = c.env.JWT_SECRET || 'default-secret-key-change-in-production';
-    const authService = new AuthService(c.env.DB, jwtSecret);
+    if (!c.env.JWT_SECRET) {
+      return c.json({ error: '服务器配置错误' }, 500);
+    }
+
+    const authService = new AuthService(c.env.DB, c.env.JWT_SECRET);
     
     const success = await authService.removeRoleFromUser(user_id, role_id);
     
@@ -80,8 +90,11 @@ export async function assignPermissionHandler(c: Context<{ Bindings: Bindings }>
       return c.json({ error: 'role_id and permission_id are required' }, 400);
     }
 
-    const jwtSecret = c.env.JWT_SECRET || 'default-secret-key-change-in-production';
-    const authService = new AuthService(c.env.DB, jwtSecret);
+    if (!c.env.JWT_SECRET) {
+      return c.json({ error: '服务器配置错误' }, 500);
+    }
+
+    const authService = new AuthService(c.env.DB, c.env.JWT_SECRET);
     
     const success = await authService.assignPermissionToRole(role_id, permission_id);
     
@@ -103,8 +116,11 @@ export async function removePermissionHandler(c: Context<{ Bindings: Bindings }>
       return c.json({ error: 'role_id and permission_id are required' }, 400);
     }
 
-    const jwtSecret = c.env.JWT_SECRET || 'default-secret-key-change-in-production';
-    const authService = new AuthService(c.env.DB, jwtSecret);
+    if (!c.env.JWT_SECRET) {
+      return c.json({ error: '服务器配置错误' }, 500);
+    }
+
+    const authService = new AuthService(c.env.DB, c.env.JWT_SECRET);
     
     const success = await authService.removePermissionFromRole(role_id, permission_id);
     
