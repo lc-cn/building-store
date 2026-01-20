@@ -81,8 +81,6 @@ npm run dev
 cd services/product-service
 # ... 类似步骤
 ```
-npm run dev
-```
 
 ### 5. 访问服务
 
