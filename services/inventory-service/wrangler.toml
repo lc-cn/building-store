@@ -2,8 +2,24 @@ name = "inventory-service"
 main = "src/index.ts"
 compatibility_date = "2023-12-01"
 
+# D1 数据库绑定
+[[d1_databases]]
+binding = "DB"
+database_name = "building-store-inventory"
+database_id = "your-database-id-here"
+
 [env.production]
 name = "inventory-service-prod"
 
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "building-store-inventory-prod"
+database_id = "your-production-database-id-here"
+
 [env.development]
 name = "inventory-service-dev"
+
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "building-store-inventory-dev"
+database_id = "your-development-database-id-here"
