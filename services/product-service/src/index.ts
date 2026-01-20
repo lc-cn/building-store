@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { CategoryHandler } from './handlers/category.handler';
 import { ProductHandler } from './handlers/product.handler';
 import { VariantHandler } from './handlers/variant.handler';
+import { specificationHandlers, unitHandlers } from './handlers/specifications';
 import type { Bindings } from './types';
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -119,5 +120,19 @@ app.put('/variants/:id', VariantHandler.updateVariant);
 
 // 删除变体
 app.delete('/variants/:id', VariantHandler.deleteVariant);
+
+// ==================== 商品规格路由 ====================
+
+app.get('/specifications', specificationHandlers.list);
+app.post('/specifications', specificationHandlers.create);
+app.put('/specifications/:id', specificationHandlers.update);
+app.delete('/specifications/:id', specificationHandlers.delete);
+
+// ==================== 商品单位路由 ====================
+
+app.get('/units', unitHandlers.list);
+app.post('/units', unitHandlers.create);
+app.put('/units/:id', unitHandlers.update);
+app.delete('/units/:id', unitHandlers.delete);
 
 export default app;

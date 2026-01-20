@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { InventoryHandler } from './handlers/inventory.handler';
 import { WarehouseHandler } from './handlers/warehouse.handler';
+import { warehouseHandlers } from './handlers/warehouse';
 import type { Env } from './types';
 
 const app = new Hono<Env>();
@@ -69,21 +70,21 @@ app.post('/inventory/cleanup-expired', InventoryHandler.cleanupExpired);
 // ============ 仓库路由 ============
 
 // 获取仓库列表
-app.get('/warehouses', WarehouseHandler.getWarehouses);
+app.get('/warehouses', warehouseHandlers.list);
 
 // 创建仓库
-app.post('/warehouses', WarehouseHandler.createWarehouse);
+app.post('/warehouses', warehouseHandlers.create);
 
 // 获取仓库详情
-app.get('/warehouses/:id', WarehouseHandler.getWarehouse);
+app.get('/warehouses/:id', warehouseHandlers.get);
 
 // 更新仓库
-app.put('/warehouses/:id', WarehouseHandler.updateWarehouse);
+app.put('/warehouses/:id', warehouseHandlers.update);
 
 // 删除仓库
-app.delete('/warehouses/:id', WarehouseHandler.deleteWarehouse);
+app.delete('/warehouses/:id', warehouseHandlers.delete);
 
 // 获取仓库库存统计
-app.get('/warehouses/:id/stats', WarehouseHandler.getWarehouseStats);
+app.get('/warehouses/:id/stats', warehouseHandlers.getInventoryStats);
 
 export default app;

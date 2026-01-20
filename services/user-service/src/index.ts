@@ -34,6 +34,7 @@ import {
   assignPermissionHandler, 
   removePermissionHandler 
 } from './handlers/auth.handler';
+import { membershipTypeHandlers, membershipCardHandlers } from './handlers/membership';
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -101,5 +102,17 @@ app.delete('/user-roles', authMiddleware, requireSuperAdmin(), removeRoleHandler
 // 角色权限关联路由
 app.post('/role-permissions', authMiddleware, requireSuperAdmin(), assignPermissionHandler);
 app.delete('/role-permissions', authMiddleware, requireSuperAdmin(), removePermissionHandler);
+
+// 会员卡类型路由
+app.get('/membership-types', membershipTypeHandlers.list);
+app.post('/membership-types', authMiddleware, requireSuperAdmin(), membershipTypeHandlers.create);
+app.put('/membership-types/:id', authMiddleware, requireSuperAdmin(), membershipTypeHandlers.update);
+app.delete('/membership-types/:id', authMiddleware, requireSuperAdmin(), membershipTypeHandlers.delete);
+
+// 会员卡路由
+app.get('/users/:userId/membership-cards', authMiddleware, membershipCardHandlers.getUserCards);
+app.post('/membership-cards', authMiddleware, membershipCardHandlers.create);
+app.post('/membership-cards/:id/renew', authMiddleware, membershipCardHandlers.renew);
+app.put('/membership-cards/:id/status', authMiddleware, membershipCardHandlers.updateStatus);
 
 export default app;
