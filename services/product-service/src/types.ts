@@ -144,4 +144,5 @@ export interface UpdateVariantInput {
 export interface Bindings {
   DB: D1Database;
   CACHE: KVNamespace;
+  [key: string]: any;
 }
