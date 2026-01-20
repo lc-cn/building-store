@@ -68,13 +68,15 @@ export class RouterService {
    * 路径匹配（支持通配符）
    */
   private matchPath(pattern: string, path: string): boolean {
-    // 将路径模式转换为正则表达式
+    // 首先转义所有正则表达式特殊字符
+    let regexPattern = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+    
+    // 然后处理通配符
     // 支持 * (匹配单个路径段) 和 ** (匹配多个路径段)
-    const regexPattern = pattern
-      .replace(/\*\*/g, '____DOUBLE_STAR____')
-      .replace(/\*/g, '[^/]+')
-      .replace(/____DOUBLE_STAR____/g, '.*')
-      .replace(/\//g, '\\/');
+    regexPattern = regexPattern
+      .replace(/\\\*\\\*/g, '____DOUBLE_STAR____')  // 临时替换 **
+      .replace(/\\\*/g, '[^/]+')                     // 替换 * 为匹配单个路径段
+      .replace(/____DOUBLE_STAR____/g, '.*');        // 替换 ** 为匹配多个路径段
 
     const regex = new RegExp(`^${regexPattern}$`);
     return regex.test(path);
