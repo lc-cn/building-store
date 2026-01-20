@@ -49,8 +49,12 @@ else
     MISSING_TOOLS=1
 fi
 
-if command_exists docker-compose; then
-    print_success "Docker Compose 已安装: $(docker-compose --version)"
+if command_exists docker-compose || docker compose version >/dev/null 2>&1; then
+    if command_exists docker-compose; then
+        print_success "Docker Compose 已安装: $(docker-compose --version)"
+    else
+        print_success "Docker Compose 已安装: $(docker compose version)"
+    fi
 else
     print_error "Docker Compose 未安装"
     MISSING_TOOLS=1
@@ -199,14 +203,23 @@ echo "启动基础设施服务"
 echo "======================================"
 echo ""
 
-cd docker
+DOCKER_DIR="${BASH_SOURCE%/*}/../docker"
+cd "$DOCKER_DIR" || exit 1
 
 echo "拉取Docker镜像..."
-docker-compose pull
+if command_exists docker-compose; then
+    docker-compose pull
+else
+    docker compose pull
+fi
 
 echo ""
 echo "启动服务..."
-docker-compose up -d
+if command_exists docker-compose; then
+    docker-compose up -d
+else
+    docker compose up -d
+fi
 
 echo ""
 echo "等待服务启动..."
@@ -214,9 +227,13 @@ sleep 10
 
 echo ""
 echo "检查服务状态..."
-docker-compose ps
+if command_exists docker-compose; then
+    docker-compose ps
+else
+    docker compose ps
+fi
 
-cd ..
+cd - > /dev/null
 
 echo ""
 echo "======================================"
@@ -241,6 +258,11 @@ echo "  1. 克隆各个微服务仓库"
 echo "  2. 配置各服务的环境变量"
 echo "  3. 启动各个微服务"
 echo ""
-echo "使用 'docker-compose -f docker/docker-compose.yml logs -f' 查看日志"
-echo "使用 'docker-compose -f docker/docker-compose.yml down' 停止所有服务"
+if command_exists docker-compose; then
+    echo "使用 'docker-compose -f docker/docker-compose.yml logs -f' 查看日志"
+    echo "使用 'docker-compose -f docker/docker-compose.yml down' 停止所有服务"
+else
+    echo "使用 'docker compose -f docker/docker-compose.yml logs -f' 查看日志"
+    echo "使用 'docker compose -f docker/docker-compose.yml down' 停止所有服务"
+fi
 echo ""
