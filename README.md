@@ -1,10 +1,10 @@
 # Building Store - 建筑商店
 
-一个基于微服务架构的建筑材料电商平台
+一个基于微服务架构的建筑材料电商平台（Monorepo）
 
 ## 项目概述
 
-Building Store 是一个采用微服务架构设计的建筑材料在线商店系统。本项目将后端服务拆分为多个独立的微服务，实现核心服务与边缘服务的解耦，提高系统的可维护性、可扩展性和可靠性。
+Building Store 是一个采用微服务架构设计的建筑材料在线商店系统。本项目采用 Monorepo 方式组织代码，将后端服务拆分为多个独立的微服务模块，实现核心服务与边缘服务的解耦，提高系统的可维护性、可扩展性和可靠性。
 
 ## 架构设计
 
@@ -20,34 +20,34 @@ Building Store 是一个采用微服务架构设计的建筑材料在线商店�
 
 #### 核心服务层 (Core Services)
 
-核心服务层包含业务核心逻辑，各服务独立存储在不同仓库中：
+核心服务层包含业务核心逻辑，各服务在 `services/` 目录下独立管理：
 
-1. **用户服务 (User Service)**
-   - 仓库: `building-store-user-service`
+1. **用户服务 (user-service)**
+   - 目录: `services/user-service/`
    - 功能: 用户注册、登录、个人信息管理、权限管理
    - 数据库: PostgreSQL
    - 端口: 8001
 
-2. **产品服务 (Product Service)**
-   - 仓库: `building-store-product-service`
+2. **产品服务 (product-service)**
+   - 目录: `services/product-service/`
    - 功能: 产品目录管理、分类管理、产品搜索、价格管理
    - 数据库: PostgreSQL + Elasticsearch (搜索)
    - 端口: 8002
 
-3. **订单服务 (Order Service)**
-   - 仓库: `building-store-order-service`
+3. **订单服务 (order-service)**
+   - 目录: `services/order-service/`
    - 功能: 订单创建、订单状态管理、订单查询、订单历史
    - 数据库: PostgreSQL
    - 端口: 8003
 
-4. **库存服务 (Inventory Service)**
-   - 仓库: `building-store-inventory-service`
+4. **库存服务 (inventory-service)**
+   - 目录: `services/inventory-service/`
    - 功能: 库存管理、库存预留、库存释放、库存同步
    - 数据库: PostgreSQL + Redis (缓存)
    - 端口: 8004
 
-5. **支付服务 (Payment Service)**
-   - 仓库: `building-store-payment-service`
+5. **支付服务 (payment-service)**
+   - 目录: `services/payment-service/`
    - 功能: 支付处理、退款处理、支付回调、账单管理
    - 数据库: PostgreSQL
    - 端口: 8005
@@ -56,42 +56,53 @@ Building Store 是一个采用微服务架构设计的建筑材料在线商店�
 
 边缘服务层负责流量管理、安全认证等非业务核心功能：
 
-1. **API 网关 (API Gateway)**
-   - 仓库: `building-store-api-gateway`
+1. **API 网关 (api-gateway)**
+   - 目录: `services/api-gateway/`
    - 功能: 路由转发、负载均衡、限流熔断、协议转换
    - 技术栈: Kong / Nginx / Spring Cloud Gateway
    - 端口: 8000
 
-2. **认证服务 (Auth Service)**
-   - 仓库: `building-store-auth-service`
+2. **认证服务 (auth-service)**
+   - 目录: `services/auth-service/`
    - 功能: JWT令牌生成、令牌验证、OAuth2.0、单点登录
    - 数据库: Redis (令牌存储)
    - 端口: 8006
 
-3. **通知服务 (Notification Service)**
-   - 仓库: `building-store-notification-service`
+3. **通知服务 (notification-service)**
+   - 目录: `services/notification-service/`
    - 功能: 邮件通知、短信通知、站内消息、推送通知
    - 数据库: MongoDB
    - 端口: 8007
 
 #### 基础设施服务 (Infrastructure Services)
 
-1. **配置中心 (Config Service)**
-   - 仓库: `building-store-config-service`
+1. **配置中心 (config-service)**
+   - 目录: `services/config-service/`
    - 功能: 集中配置管理、动态配置更新
    - 技术栈: Spring Cloud Config / Consul
 
-2. **服务注册与发现 (Service Registry)**
-   - 仓库: `building-store-service-registry`
+2. **服务注册与发现 (service-registry)**
+   - 目录: `services/service-registry/`
    - 功能: 服务注册、服务发现、健康检查
    - 技术栈: Consul / Eureka / Nacos
 
-## 仓库结构
+## Monorepo 仓库结构
 
-本仓库作为微服务架构的主仓库，包含以下内容：
+本项目采用 Monorepo 方式组织，所有微服务在同一个仓库中管理：
 
 ```
 building-store/
+├── services/                      # 所有微服务
+│   ├── user-service/             # 用户服务
+│   ├── product-service/          # 产品服务
+│   ├── order-service/            # 订单服务
+│   ├── inventory-service/        # 库存服务
+│   ├── payment-service/          # 支付服务
+│   ├── api-gateway/              # API网关
+│   ├── auth-service/             # 认证服务
+│   ├── notification-service/     # 通知服务
+│   ├── config-service/           # 配置中心
+│   └── service-registry/         # 服务注册与发现
 ├── docs/                          # 架构文档
 │   ├── architecture.md           # 架构设计文档
 │   ├── api-design.md            # API设计规范
@@ -110,6 +121,17 @@ building-store/
 │   └── ingress.yaml
 └── README.md                     # 本文件
 ```
+
+## Monorepo 优势
+
+采用 Monorepo 方式管理微服务具有以下优势：
+
+1. **统一管理**: 所有服务代码在一个仓库，便于统一管理和维护
+2. **代码共享**: 共享库和工具代码可以轻松在服务间复用
+3. **原子提交**: 跨服务的更改可以在一个提交中完成，保持一致性
+4. **统一CI/CD**: 所有服务使用统一的CI/CD流程
+5. **版本同步**: 避免多仓库版本不一致的问题
+6. **重构便利**: 跨服务重构更加容易和安全
 
 ## 技术栈
 
@@ -167,17 +189,6 @@ building-store/
 - **编排式**: 订单服务作为编排器协调各服务
 - **事件驱动式**: 通过事件链实现分布式事务
 
-## 部署架构
-
-### 开发环境
-使用 Docker Compose 在本地运行所有服务
-
-### 生产环境
-- **容器编排**: Kubernetes
-- **负载均衡**: Nginx Ingress Controller
-- **自动扩展**: HPA (Horizontal Pod Autoscaler)
-- **服务网格**: Istio (提供流量管理、安全、可观测性)
-
 ## 快速开始
 
 ### 前置要求
@@ -189,7 +200,7 @@ building-store/
 ### 本地开发环境搭建
 
 ```bash
-# 克隆主仓库
+# 克隆仓库
 git clone https://github.com/lc-cn/building-store.git
 cd building-store
 
@@ -197,25 +208,28 @@ cd building-store
 ./scripts/setup.sh
 
 # 启动基础设施服务（数据库、缓存、消息队列等）
-docker-compose up -d
+docker compose -f docker/docker-compose.yml up -d
 
-# 克隆和启动各个微服务（参见各服务仓库的README）
+# 进入具体服务目录开发
+cd services/user-service
+npm install
+npm run dev
 ```
 
-### 服务仓库列表
+### 服务列表
 
-| 服务名称 | 仓库地址 | 文档 |
-|---------|---------|------|
-| API Gateway | `lc-cn/building-store-api-gateway` | [文档](docs/services/api-gateway.md) |
-| User Service | `lc-cn/building-store-user-service` | [文档](docs/services/user-service.md) |
-| Product Service | `lc-cn/building-store-product-service` | [文档](docs/services/product-service.md) |
-| Order Service | `lc-cn/building-store-order-service` | [文档](docs/services/order-service.md) |
-| Inventory Service | `lc-cn/building-store-inventory-service` | [文档](docs/services/inventory-service.md) |
-| Payment Service | `lc-cn/building-store-payment-service` | [文档](docs/services/payment-service.md) |
-| Auth Service | `lc-cn/building-store-auth-service` | [文档](docs/services/auth-service.md) |
-| Notification Service | `lc-cn/building-store-notification-service` | [文档](docs/services/notification-service.md) |
-| Config Service | `lc-cn/building-store-config-service` | [文档](docs/services/config-service.md) |
-| Service Registry | `lc-cn/building-store-service-registry` | [文档](docs/services/service-registry.md) |
+| 服务名称 | 目录 | 端口 | 文档 |
+|---------|------|------|------|
+| API Gateway | `services/api-gateway/` | 8000 | [文档](services/api-gateway/README.md) |
+| 用户服务 | `services/user-service/` | 8001 | [文档](services/user-service/README.md) |
+| 产品服务 | `services/product-service/` | 8002 | [文档](services/product-service/README.md) |
+| 订单服务 | `services/order-service/` | 8003 | [文档](services/order-service/README.md) |
+| 库存服务 | `services/inventory-service/` | 8004 | [文档](services/inventory-service/README.md) |
+| 支付服务 | `services/payment-service/` | 8005 | [文档](services/payment-service/README.md) |
+| 认证服务 | `services/auth-service/` | 8006 | [文档](services/auth-service/README.md) |
+| 通知服务 | `services/notification-service/` | 8007 | [文档](services/notification-service/README.md) |
+| 配置中心 | `services/config-service/` | - | [文档](services/config-service/README.md) |
+| 服务注册 | `services/service-registry/` | - | [文档](services/service-registry/README.md) |
 
 ## 开发规范
 
@@ -239,7 +253,7 @@ docker-compose up -d
 ## 安全性
 
 ### 认证与授权
-- JWT Bearer Token 认证
+- JWT令牌认证
 - RBAC (基于角色的访问控制)
 - OAuth 2.0 支持
 
@@ -275,46 +289,13 @@ docker-compose up -d
 - 错误率阈值告警
 - 资源使用率告警
 
-## 性能优化
-
-### 缓存策略
-- Redis 多级缓存
-- CDN 静态资源缓存
-- 数据库查询缓存
-
-### 数据库优化
-- 索引优化
-- 读写分离
-- 分库分表
-
-### 服务优化
-- 连接池管理
-- 异步处理
-- 批量操作
-- 限流降级
-
-## 测试策略
-
-### 单元测试
-- 各服务独立单元测试
-- 覆盖率要求 > 80%
-
-### 集成测试
-- 服务间集成测试
-- API 端到端测试
-
-### 性能测试
-- 压力测试
-- 负载测试
-- 稳定性测试
-
 ## 贡献指南
 
 欢迎贡献代码！请遵循以下步骤：
 
-1. Fork 相应的服务仓库
+1. Fork 本仓库
 2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+3. 提交更改 (`git commit -m 'feat: Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 开启 Pull Request
 
@@ -333,10 +314,9 @@ docker-compose up -d
 ### 第一阶段 (已完成)
 - [x] 架构设计
 - [x] 技术栈选型
-- [x] 仓库结构规划
+- [x] Monorepo 结构规划
 
 ### 第二阶段 (进行中)
-- [ ] 创建各微服务仓库
 - [ ] 实现基础设施服务
 - [ ] 实现核心服务
 - [ ] 实现边缘服务
@@ -358,5 +338,6 @@ docker-compose up -d
 ### v0.1.0 (2026-01-20)
 - 初始化项目
 - 完成微服务架构设计
-- 规划服务拆分方案
+- 规划 Monorepo 服务拆分方案
 - 定义核心服务和边缘服务
+- 创建服务目录结构

@@ -64,30 +64,23 @@ docker-compose -f docker/docker-compose.yml ps
 
 确保所有服务都在运行状态。
 
-### 4. 克隆和启动微服务
+### 4. 启动微服务
 
-每个微服务都在独立的仓库中，需要分别克隆和启动：
+所有微服务都在 `services/` 目录下，可以独立启动：
 
 ```bash
-# 创建服务目录
-mkdir -p services
-cd services
-
-# 克隆各个服务
-git clone https://github.com/lc-cn/building-store-user-service.git
-git clone https://github.com/lc-cn/building-store-product-service.git
-git clone https://github.com/lc-cn/building-store-order-service.git
-git clone https://github.com/lc-cn/building-store-inventory-service.git
-git clone https://github.com/lc-cn/building-store-payment-service.git
-git clone https://github.com/lc-cn/building-store-api-gateway.git
-git clone https://github.com/lc-cn/building-store-auth-service.git
-
-# 启动每个服务（以用户服务为例）
-cd building-store-user-service
+# 启动用户服务
+cd services/user-service
 npm install
 cp .env.example .env
 # 编辑 .env 文件配置数据库连接等
 npm run migrate
+npm run dev
+
+# 在新终端启动其他服务
+cd services/product-service
+# ... 类似步骤
+```
 npm run dev
 ```
 

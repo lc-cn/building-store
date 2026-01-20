@@ -40,19 +40,20 @@ chmod +x scripts/setup.sh
 ./scripts/setup.sh
 ```
 
-### 3. 克隆微服务
+### 3. 开始开发
 
 ```bash
-mkdir -p services && cd services
+# 所有微服务都在 services/ 目录下
+cd services
 
-# 克隆所有微服务
-git clone https://github.com/lc-cn/building-store-user-service.git
-git clone https://github.com/lc-cn/building-store-product-service.git
-git clone https://github.com/lc-cn/building-store-order-service.git
-git clone https://github.com/lc-cn/building-store-inventory-service.git
-git clone https://github.com/lc-cn/building-store-payment-service.git
-git clone https://github.com/lc-cn/building-store-api-gateway.git
-git clone https://github.com/lc-cn/building-store-auth-service.git
+# 进入具体服务进行开发
+cd user-service
+npm install
+npm run dev
+
+# 或开发其他服务
+cd ../product-service
+# ...
 ```
 
 ## 代码规范
