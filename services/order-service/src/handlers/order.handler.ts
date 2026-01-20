@@ -1,8 +1,7 @@
-import { Context } from 'hono';
 import { OrderService } from '../services/order.service';
 import { OrderItemService } from '../services/order-item.service';
 import {
-  WorkerEnv,
+  HonoContext,
   CreateOrderRequest,
   UpdateOrderRequest,
   UpdateOrderStatusRequest,
@@ -13,7 +12,7 @@ import {
  * 获取订单列表
  * GET /orders?user_id=1&status=pending&page=1&limit=20
  */
-export async function getOrders(c: any) {
+export async function getOrders(c: HonoContext) {
   try {
     const db = c.env.DB;
     const orderService = new OrderService(db);
@@ -51,7 +50,7 @@ export async function getOrders(c: any) {
  * 创建订单
  * POST /orders
  */
-export async function createOrder(c: any) {
+export async function createOrder(c: HonoContext) {
   try {
     const db = c.env.DB;
     const orderService = new OrderService(db);
@@ -100,7 +99,7 @@ export async function createOrder(c: any) {
  * 获取订单详情
  * GET /orders/:id
  */
-export async function getOrderById(c: any) {
+export async function getOrderById(c: HonoContext) {
   try {
     const db = c.env.DB;
     const orderService = new OrderService(db);
@@ -132,7 +131,7 @@ export async function getOrderById(c: any) {
  * 更新订单
  * PUT /orders/:id
  */
-export async function updateOrder(c: any) {
+export async function updateOrder(c: HonoContext) {
   try {
     const db = c.env.DB;
     const orderService = new OrderService(db);
@@ -164,7 +163,7 @@ export async function updateOrder(c: any) {
  * 删除订单
  * DELETE /orders/:id
  */
-export async function deleteOrder(c: any) {
+export async function deleteOrder(c: HonoContext) {
   try {
     const db = c.env.DB;
     const orderService = new OrderService(db);
@@ -198,7 +197,7 @@ export async function deleteOrder(c: any) {
  * 更新订单状态
  * PUT /orders/:id/status
  */
-export async function updateOrderStatus(c: any) {
+export async function updateOrderStatus(c: HonoContext) {
   try {
     const db = c.env.DB;
     const orderService = new OrderService(db);
@@ -238,7 +237,7 @@ export async function updateOrderStatus(c: any) {
  * 获取订单项列表
  * GET /orders/:id/items
  */
-export async function getOrderItems(c: any) {
+export async function getOrderItems(c: HonoContext) {
   try {
     const db = c.env.DB;
     const orderService = new OrderService(db);
@@ -273,7 +272,7 @@ export async function getOrderItems(c: any) {
  * 添加订单项
  * POST /orders/:id/items
  */
-export async function addOrderItem(c: any) {
+export async function addOrderItem(c: HonoContext) {
   try {
     const db = c.env.DB;
     const orderService = new OrderService(db);
@@ -347,7 +346,7 @@ export async function addOrderItem(c: any) {
  * 获取订单状态历史
  * GET /orders/:id/history
  */
-export async function getOrderHistory(c: any) {
+export async function getOrderHistory(c: HonoContext) {
   try {
     const db = c.env.DB;
     const orderService = new OrderService(db);

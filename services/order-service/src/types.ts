@@ -148,3 +148,10 @@ export interface WorkerEnv {
   DB: D1Database;
   [key: string]: any;
 }
+
+// Hono Context 类型别名
+export type HonoContext = {
+  env: WorkerEnv;
+  req: any;
+  json: (data: any, status?: number) => Response;
+};
