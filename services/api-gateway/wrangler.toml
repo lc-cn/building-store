@@ -1,0 +1,9 @@
+name = "api-gateway"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+
+[env.production]
+name = "api-gateway-prod"
+
+[env.development]
+name = "api-gateway-dev"

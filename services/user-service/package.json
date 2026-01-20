@@ -1,43 +1,21 @@
 {
   "name": "user-service",
   "version": "0.1.0",
-  "description": "Building Store 用户服务",
-  "main": "dist/index.js",
+  "description": "Building Store 用户服务 - Cloudflare Workers",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
-    "test": "jest",
-    "lint": "eslint src/**/*.ts",
-    "migrate": "node scripts/migrate.js"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "test": "vitest"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "pg": "^8.11.3",
-    "redis": "^4.6.10",
-    "bcrypt": "^5.1.1",
-    "jsonwebtoken": "^9.0.2",
-    "dotenv": "^16.3.1",
-    "cors": "^2.8.5",
-    "helmet": "^7.1.0",
-    "morgan": "^1.10.0"
+    "hono": "^3.11.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.20",
-    "@types/node": "^20.9.0",
-    "@types/bcrypt": "^5.0.2",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/cors": "^2.8.16",
-    "@types/morgan": "^1.9.9",
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "wrangler": "^3.20.0",
     "typescript": "^5.2.2",
-    "ts-node-dev": "^2.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
-    "eslint": "^8.53.0",
-    "jest": "^29.7.0",
-    "@types/jest": "^29.5.8"
-  },
-  "engines": {
-    "node": ">=18"
+    "vitest": "^1.0.0"
   }
 }

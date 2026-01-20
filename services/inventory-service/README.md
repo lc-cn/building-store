@@ -1,25 +1,54 @@
-# 库存服务
+# inventory-service
 
 ## 服务说明
 
-库存服务负责管理库存和库存控制。
+inventory-service - 基于 Cloudflare Workers 的 Serverless 微服务
 
 ## 技术栈
 
-- 开发语言: Node.js (TypeScript)
-- 框架: Express.js
-- 数据库: PostgreSQL
-- 缓存: Redis
-- 端口: 8004
+- **运行时**: Cloudflare Workers Runtime
+- **框架**: Hono (轻量级Web框架)
+- **数据库**: Cloudflare D1 (SQL数据库) / KV (键值存储)
+- **开发语言**: TypeScript
 
-## 主要功能
+## 特点
 
-- 库存查询
-- 库存预留
-- 库存释放
-- 库存调整
-- 库存同步
+- ✅ 全球边缘部署
+- ✅ 零冷启动
+- ✅ 自动扩展
+- ✅ 按请求计费
+- ✅ 高可用性
 
-## 开发指南
+## 开发与部署
+
+### 本地开发
+
+```bash
+cd services/inventory-service
+npm install
+npm run dev
+```
+
+访问: http://localhost:8787
+
+### 部署到 Cloudflare
+
+```bash
+npm run deploy
+```
+
+### 查看实时日志
+
+```bash
+npm run tail
+```
+
+## 配置
+
+- `wrangler.toml`: Cloudflare Workers 配置
+- `.dev.vars`: 本地开发环境变量
+- 生产环境变量在 Cloudflare Dashboard 中配置
+
+## 文档
 
 详见主仓库的 [开发指南](../../docs/development.md)

@@ -1,37 +1,28 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import dotenv from 'dotenv';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 8003;
+const app = new Hono();
 
 // 中间件
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
-app.use(morgan('combined'));
+app.use('/*', cors());
 
 // 健康检查
-app.get('/health', (req, res) => {
-  res.json({ status: 'healthy', service: 'order-service' });
-});
-
-// 路由
-app.get('/', (req, res) => {
-  res.json({
-    service: '订单服务',
-    version: '0.1.0',
-    description: '订单创建、订单状态管理、订单查询、订单历史',
+app.get('/health', (c) => {
+  return c.json({ 
+    status: 'healthy', 
+    service: 'order-service',
+    runtime: 'cloudflare-workers'
   });
 });
 
-// 启动服务器
-app.listen(PORT, () => {
-  console.log(`订单服务 运行在端口 ${PORT}`);
+// 根路由
+app.get('/', (c) => {
+  return c.json({
+    service: '订单服务',
+    version: '0.1.0',
+    description: '订单创建、订单状态管理、订单查询、订单历史',
+    runtime: 'Cloudflare Workers'
+  });
 });
 
 export default app;

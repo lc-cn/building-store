@@ -1,0 +1,9 @@
+name = "auth-service"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+
+[env.production]
+name = "auth-service-prod"
+
+[env.development]
+name = "auth-service-dev"

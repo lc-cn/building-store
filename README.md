@@ -1,90 +1,93 @@
 # Building Store - 建筑商店
 
-一个基于微服务架构的建筑材料电商平台（Monorepo）
+一个基于 Serverless 微服务架构的建筑材料电商平台（Monorepo）
 
 ## 项目概述
 
-Building Store 是一个采用微服务架构设计的建筑材料在线商店系统。本项目采用 Monorepo 方式组织代码，将后端服务拆分为多个独立的微服务模块，实现核心服务与边缘服务的解耦，提高系统的可维护性、可扩展性和可靠性。
+Building Store 是一个采用 Serverless 微服务架构设计的建筑材料在线商店系统。本项目采用 Monorepo 方式组织代码，将后端服务拆分为多个独立的微服务模块，**部署在 Cloudflare Workers** 上，实现核心服务与边缘服务的解耦，提高系统的可维护性、可扩展性和可靠性。
 
 ## 架构设计
 
-### 微服务架构原则
+### Serverless 微服务架构原则
 
 1. **服务自治**: 每个微服务独立开发、部署和扩展
-2. **数据隔离**: 每个服务拥有独立的数据存储
-3. **接口标准化**: 使用RESTful API和gRPC进行服务间通信
-4. **容错设计**: 实现服务降级、熔断和限流机制
-5. **可观测性**: 统一的日志、监控和链路追踪
+2. **数据隔离**: 每个服务拥有独立的数据存储（D1/KV）
+3. **接口标准化**: 使用 RESTful API 进行服务间通信
+4. **边缘计算**: 部署在 Cloudflare 全球边缘网络，零冷启动
+5. **按需计费**: 按请求付费，无闲置成本
+6. **自动扩展**: 根据流量自动扩展，无需手动管理
 
 ### 服务分层
 
-#### 核心服务层 (Core Services)
+#### 核心服务层 (Core Services) - Cloudflare Workers
 
 核心服务层包含业务核心逻辑，各服务在 `services/` 目录下独立管理：
 
 1. **用户服务 (user-service)**
    - 目录: `services/user-service/`
    - 功能: 用户注册、登录、个人信息管理、权限管理
-   - 数据库: PostgreSQL
-   - 端口: 8001
+   - 数据存储: Cloudflare D1 + KV
+   - 部署: Cloudflare Workers
 
 2. **产品服务 (product-service)**
    - 目录: `services/product-service/`
    - 功能: 产品目录管理、分类管理、产品搜索、价格管理
-   - 数据库: PostgreSQL + Elasticsearch (搜索)
-   - 端口: 8002
+   - 数据存储: Cloudflare D1 + KV
+   - 部署: Cloudflare Workers
 
 3. **订单服务 (order-service)**
    - 目录: `services/order-service/`
    - 功能: 订单创建、订单状态管理、订单查询、订单历史
-   - 数据库: PostgreSQL
-   - 端口: 8003
+   - 数据存储: Cloudflare D1
+   - 部署: Cloudflare Workers
 
 4. **库存服务 (inventory-service)**
    - 目录: `services/inventory-service/`
    - 功能: 库存管理、库存预留、库存释放、库存同步
-   - 数据库: PostgreSQL + Redis (缓存)
-   - 端口: 8004
+   - 数据存储: Cloudflare D1 + KV (缓存)
+   - 部署: Cloudflare Workers
 
 5. **支付服务 (payment-service)**
    - 目录: `services/payment-service/`
    - 功能: 支付处理、退款处理、支付回调、账单管理
-   - 数据库: PostgreSQL
-   - 端口: 8005
+   - 数据存储: Cloudflare D1
+   - 部署: Cloudflare Workers
 
-#### 边缘服务层 (Edge Services)
+#### 边缘服务层 (Edge Services) - Cloudflare Workers
 
 边缘服务层负责流量管理、安全认证等非业务核心功能：
 
 1. **API 网关 (api-gateway)**
    - 目录: `services/api-gateway/`
    - 功能: 路由转发、负载均衡、限流熔断、协议转换
-   - 技术栈: Kong / Nginx / Spring Cloud Gateway
-   - 端口: 8000
+   - 技术栈: Hono + Cloudflare Workers
+   - 部署: Cloudflare Workers
 
 2. **认证服务 (auth-service)**
    - 目录: `services/auth-service/`
    - 功能: JWT令牌生成、令牌验证、OAuth2.0、单点登录
-   - 数据库: Redis (令牌存储)
-   - 端口: 8006
+   - 数据存储: Cloudflare KV (令牌存储)
+   - 部署: Cloudflare Workers
 
 3. **通知服务 (notification-service)**
    - 目录: `services/notification-service/`
    - 功能: 邮件通知、短信通知、站内消息、推送通知
-   - 数据库: MongoDB
-   - 端口: 8007
+   - 数据存储: Cloudflare D1
+   - 部署: Cloudflare Workers
 
-#### 基础设施服务 (Infrastructure Services)
+#### 基础设施服务 (Infrastructure Services) - Cloudflare Workers
 
 1. **配置中心 (config-service)**
    - 目录: `services/config-service/`
    - 功能: 集中配置管理、动态配置更新
-   - 技术栈: Spring Cloud Config / Consul
+   - 数据存储: Cloudflare KV
+   - 部署: Cloudflare Workers
 
 2. **服务注册与发现 (service-registry)**
    - 目录: `services/service-registry/`
    - 功能: 服务注册、服务发现、健康检查
-   - 技术栈: Consul / Eureka / Nacos
+   - 数据存储: Cloudflare KV
+   - 部署: Cloudflare Workers
 
 ### 前端应用层 (Frontend Applications)
 
@@ -185,28 +188,38 @@ building-store/
 - **本地存储**: AsyncStorage
 - **平台**: iOS / Android
 
-### 后端服务
-- **开发语言**: Node.js (TypeScript) / Java (Spring Boot) / Go
-- **API框架**: Express / Spring Boot / Gin
-- **数据库**: PostgreSQL (主数据库)
-- **缓存**: Redis
-- **搜索**: Elasticsearch
-- **消息队列**: RabbitMQ / Kafka
-- **服务通信**: REST API / gRPC
+### 后端服务 (Cloudflare Workers - Serverless)
+- **运行时**: Cloudflare Workers Runtime
+- **开发语言**: TypeScript
+- **Web 框架**: Hono (轻量级、高性能)
+- **数据库**: Cloudflare D1 (SQL数据库)
+- **缓存/KV**: Cloudflare KV
+- **部署工具**: Wrangler CLI
+- **服务通信**: REST API
 
-### 基础设施
-- **容器化**: Docker
-- **编排**: Kubernetes
-- **服务网格**: Istio (可选)
-- **API网关**: Kong / Nginx
-- **配置中心**: Consul / Nacos
-- **服务注册**: Consul / Eureka
+### Cloudflare 平台服务
+- **计算**: Cloudflare Workers (Serverless)
+- **数据库**: Cloudflare D1 (SQLite-based)
+- **键值存储**: Cloudflare KV
+- **对象存储**: Cloudflare R2
+- **队列**: Cloudflare Queues
+- **分析**: Cloudflare Analytics
+- **DNS**: Cloudflare DNS
 
 ### 监控与日志
-- **日志**: ELK Stack (Elasticsearch + Logstash + Kibana)
-- **监控**: Prometheus + Grafana
-- **链路追踪**: Jaeger / Zipkin
-- **告警**: AlertManager
+- **日志**: Cloudflare Workers Logpush
+- **监控**: Cloudflare Analytics Dashboard
+- **性能追踪**: Workers Analytics Engine
+- **告警**: Cloudflare Notifications
+
+## Serverless 架构优势
+
+1. **零冷启动**: Cloudflare Workers 在全球边缘运行，无冷启动延迟
+2. **全球部署**: 自动部署到 Cloudflare 全球 300+ 数据中心
+3. **按需计费**: 只为实际请求付费，无闲置成本
+4. **自动扩展**: 根据流量自动扩展，无需手动管理
+5. **高可用性**: 内置容错和故障转移
+6. **低延迟**: 边缘计算，就近响应用户请求
 
 ## 服务间通信
 
@@ -242,10 +255,9 @@ building-store/
 ## 快速开始
 
 ### 前置要求
-- Docker & Docker Compose
-- Node.js 18+ / Java 17+ / Go 1.20+
-- PostgreSQL 14+
-- Redis 7+
+- Node.js 18+
+- Cloudflare 账号 (免费套餐即可)
+- Wrangler CLI (`npm install -g wrangler`)
 
 ### 本地开发环境搭建
 
@@ -254,16 +266,16 @@ building-store/
 git clone https://github.com/lc-cn/building-store.git
 cd building-store
 
-# 运行环境搭建脚本
-./scripts/setup.sh
-
-# 启动基础设施服务（数据库、缓存、消息队列等）
-docker compose -f docker/docker-compose.yml up -d
+# 登录 Cloudflare
+wrangler login
 
 # 启动后端服务（以用户服务为例）
 cd services/user-service
 npm install
-npm run dev
+npm run dev  # 本地开发服务器在 http://localhost:8787
+
+# 部署到 Cloudflare Workers
+npm run deploy
 
 # 启动前端应用
 # 管理端 (React Native)
@@ -292,20 +304,20 @@ npm run android
 | 管理端 | `apps/admin/` | iOS / Android | To B 移动端后台管理系统 | [文档](apps/admin/README.md) |
 | 应用端 | `apps/customer/` | iOS / Android | To C 移动端在线购物平台 | [文档](apps/customer/README.md) |
 
-#### 后端服务
+#### 后端服务 (Cloudflare Workers - Serverless)
 
-| 服务名称 | 目录 | 端口 | 文档 |
-|---------|------|------|------|
-| API Gateway | `services/api-gateway/` | 8000 | [文档](services/api-gateway/README.md) |
-| 用户服务 | `services/user-service/` | 8001 | [文档](services/user-service/README.md) |
-| 产品服务 | `services/product-service/` | 8002 | [文档](services/product-service/README.md) |
-| 订单服务 | `services/order-service/` | 8003 | [文档](services/order-service/README.md) |
-| 库存服务 | `services/inventory-service/` | 8004 | [文档](services/inventory-service/README.md) |
-| 支付服务 | `services/payment-service/` | 8005 | [文档](services/payment-service/README.md) |
-| 认证服务 | `services/auth-service/` | 8006 | [文档](services/auth-service/README.md) |
-| 通知服务 | `services/notification-service/` | 8007 | [文档](services/notification-service/README.md) |
-| 配置中心 | `services/config-service/` | - | [文档](services/config-service/README.md) |
-| 服务注册 | `services/service-registry/` | - | [文档](services/service-registry/README.md) |
+| 服务名称 | 目录 | 部署平台 | 文档 |
+|---------|------|---------|------|
+| API Gateway | `services/api-gateway/` | Cloudflare Workers | [文档](services/api-gateway/README.md) |
+| 用户服务 | `services/user-service/` | Cloudflare Workers | [文档](services/user-service/README.md) |
+| 产品服务 | `services/product-service/` | Cloudflare Workers | [文档](services/product-service/README.md) |
+| 订单服务 | `services/order-service/` | Cloudflare Workers | [文档](services/order-service/README.md) |
+| 库存服务 | `services/inventory-service/` | Cloudflare Workers | [文档](services/inventory-service/README.md) |
+| 支付服务 | `services/payment-service/` | Cloudflare Workers | [文档](services/payment-service/README.md) |
+| 认证服务 | `services/auth-service/` | Cloudflare Workers | [文档](services/auth-service/README.md) |
+| 通知服务 | `services/notification-service/` | Cloudflare Workers | [文档](services/notification-service/README.md) |
+| 配置中心 | `services/config-service/` | Cloudflare Workers | [文档](services/config-service/README.md) |
+| 服务注册 | `services/service-registry/` | Cloudflare Workers | [文档](services/service-registry/README.md) |
 
 ## 开发规范
 

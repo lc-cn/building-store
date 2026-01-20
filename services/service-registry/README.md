@@ -1,20 +1,54 @@
-# 服务注册与发现
+# service-registry
 
 ## 服务说明
 
-服务注册与发现负责服务注册和服务发现。
+service-registry - 基于 Cloudflare Workers 的 Serverless 微服务
 
 ## 技术栈
 
-- 技术选型: Consul / Eureka / Nacos
+- **运行时**: Cloudflare Workers Runtime
+- **框架**: Hono (轻量级Web框架)
+- **数据库**: Cloudflare D1 (SQL数据库) / KV (键值存储)
+- **开发语言**: TypeScript
 
-## 主要功能
+## 特点
 
-- 服务注册
-- 服务发现
-- 健康检查
-- 负载均衡策略
+- ✅ 全球边缘部署
+- ✅ 零冷启动
+- ✅ 自动扩展
+- ✅ 按请求计费
+- ✅ 高可用性
 
-## 开发指南
+## 开发与部署
+
+### 本地开发
+
+```bash
+cd services/service-registry
+npm install
+npm run dev
+```
+
+访问: http://localhost:8787
+
+### 部署到 Cloudflare
+
+```bash
+npm run deploy
+```
+
+### 查看实时日志
+
+```bash
+npm run tail
+```
+
+## 配置
+
+- `wrangler.toml`: Cloudflare Workers 配置
+- `.dev.vars`: 本地开发环境变量
+- 生产环境变量在 Cloudflare Dashboard 中配置
+
+## 文档
 
 详见主仓库的 [开发指南](../../docs/development.md)

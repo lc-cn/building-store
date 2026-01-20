@@ -1,0 +1,14 @@
+name = "config-service"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+
+# 使用 KV 存储配置
+[[kv_namespaces]]
+binding = "CONFIG"
+id = "your-config-kv-id"
+
+[env.production]
+name = "config-service-prod"
+
+[env.development]
+name = "config-service-dev"

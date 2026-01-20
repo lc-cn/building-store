@@ -1,24 +1,42 @@
-import express from 'express';
-import dotenv from 'dotenv';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
-dotenv.config();
+type Bindings = {
+  REGISTRY: KVNamespace;
+};
 
-const app = express();
-const PORT = process.env.PORT || 8600;
+const app = new Hono<{ Bindings: Bindings }>();
 
-app.use(express.json());
+app.use('/*', cors());
 
-app.get('/health', (req, res) => {
-  res.json({ status: 'healthy', service: 'service-registry' });
+app.get('/health', (c) => {
+  return c.json({ status: 'healthy', service: 'service-registry' });
 });
 
-app.get('/', (req, res) => {
-  res.json({
+app.get('/', (c) => {
+  return c.json({
     service: '服务注册与发现',
     description: '服务注册、服务发现、健康检查',
+    runtime: 'Cloudflare Workers'
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`服务注册与发现运行在端口 ${PORT}`);
+// 注册服务
+app.post('/register', async (c) => {
+  const body = await c.req.json();
+  const { serviceName, serviceUrl } = body;
+  await c.env.REGISTRY.put(serviceName, JSON.stringify({ url: serviceUrl, timestamp: Date.now() }));
+  return c.json({ message: '服务注册成功', serviceName });
 });
+
+// 发现服务
+app.get('/discover/:serviceName', async (c) => {
+  const serviceName = c.req.param('serviceName');
+  const serviceInfo = await c.env.REGISTRY.get(serviceName);
+  if (!serviceInfo) {
+    return c.json({ error: '服务不存在' }, 404);
+  }
+  return c.json({ serviceName, info: JSON.parse(serviceInfo) });
+});
+
+export default app;

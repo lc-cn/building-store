@@ -1,24 +1,34 @@
-import express from 'express';
-import dotenv from 'dotenv';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
-dotenv.config();
+type Bindings = {
+  CONFIG: KVNamespace;
+};
 
-const app = express();
-const PORT = process.env.PORT || 8500;
+const app = new Hono<{ Bindings: Bindings }>();
 
-app.use(express.json());
+app.use('/*', cors());
 
-app.get('/health', (req, res) => {
-  res.json({ status: 'healthy', service: 'config-service' });
+app.get('/health', (c) => {
+  return c.json({ status: 'healthy', service: 'config-service' });
 });
 
-app.get('/', (req, res) => {
-  res.json({
+app.get('/', (c) => {
+  return c.json({
     service: '配置中心',
     description: '集中配置管理、动态配置更新',
+    runtime: 'Cloudflare Workers'
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`配置中心运行在端口 ${PORT}`);
+// 获取配置
+app.get('/config/:key', async (c) => {
+  const key = c.req.param('key');
+  const value = await c.env.CONFIG.get(key);
+  if (!value) {
+    return c.json({ error: '配置不存在' }, 404);
+  }
+  return c.json({ key, value });
 });
+
+export default app;

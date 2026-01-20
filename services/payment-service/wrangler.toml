@@ -1,0 +1,9 @@
+name = "payment-service"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+
+[env.production]
+name = "payment-service-prod"
+
+[env.development]
+name = "payment-service-dev"
