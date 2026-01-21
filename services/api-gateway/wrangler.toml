@@ -1,0 +1,63 @@
+name = "api-gateway"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+
+# KV命名空间绑定
+[[kv_namespaces]]
+binding = "ROUTES"
+id = "routes_kv_namespace_id"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "rate_limit_kv_namespace_id"
+
+[[kv_namespaces]]
+binding = "METRICS"
+id = "metrics_kv_namespace_id"
+
+[[kv_namespaces]]
+binding = "CIRCUIT_BREAKER"
+id = "circuit_breaker_kv_namespace_id"
+
+# 环境变量
+[vars]
+JWT_SECRET = "your-jwt-secret-key-change-in-production"
+ADMIN_API_KEY = "your-admin-api-key-change-in-production"
+
+[env.production]
+name = "api-gateway-prod"
+
+[[env.production.kv_namespaces]]
+binding = "ROUTES"
+id = "routes_kv_namespace_id_prod"
+
+[[env.production.kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "rate_limit_kv_namespace_id_prod"
+
+[[env.production.kv_namespaces]]
+binding = "METRICS"
+id = "metrics_kv_namespace_id_prod"
+
+[[env.production.kv_namespaces]]
+binding = "CIRCUIT_BREAKER"
+id = "circuit_breaker_kv_namespace_id_prod"
+
+[env.development]
+name = "api-gateway-dev"
+
+[[env.development.kv_namespaces]]
+binding = "ROUTES"
+id = "routes_kv_namespace_id_dev"
+
+[[env.development.kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "rate_limit_kv_namespace_id_dev"
+
+[[env.development.kv_namespaces]]
+binding = "METRICS"
+id = "metrics_kv_namespace_id_dev"
+
+[[env.development.kv_namespaces]]
+binding = "CIRCUIT_BREAKER"
+id = "circuit_breaker_kv_namespace_id_dev"

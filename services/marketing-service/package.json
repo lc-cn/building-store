@@ -1,0 +1,19 @@
+{
+  "name": "marketing-service",
+  "version": "1.0.0",
+  "description": "营销服务 - 优惠券、促销活动管理",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "dependencies": {
+    "hono": "^3.11.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.22.1"
+  }
+}

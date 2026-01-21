@@ -1,0 +1,9 @@
+name = "product-service"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+
+[env.production]
+name = "product-service-prod"
+
+[env.development]
+name = "product-service-dev"

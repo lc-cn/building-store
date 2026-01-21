@@ -1,0 +1,21 @@
+name = "user-service"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+
+# 绑定到 D1 数据库 (Cloudflare 的 SQL 数据库)
+[[d1_databases]]
+binding = "DB"
+database_name = "user_service_db"
+database_id = "your-database-id"
+
+# 绑定到 KV (用于缓存)
+[[kv_namespaces]]
+binding = "CACHE"
+id = "your-kv-id"
+
+[env.production]
+name = "user-service-prod"
+route = "user.building-store.com/*"
+
+[env.development]
+name = "user-service-dev"

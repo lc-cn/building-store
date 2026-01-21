@@ -1,0 +1,9 @@
+name = "notification-service"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+
+[env.production]
+name = "notification-service-prod"
+
+[env.development]
+name = "notification-service-dev"

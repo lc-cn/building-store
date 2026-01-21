@@ -1,0 +1,12 @@
+name = "marketing-service"
+main = "src/index.ts"
+compatibility_date = "2023-12-18"
+
+[[ d1_databases ]]
+binding = "DB"
+database_name = "marketing_service_db"
+database_id = "marketing-service-db-id"
+
+[[ kv_namespaces ]]
+binding = "KV"
+id = "marketing-service-kv-id"

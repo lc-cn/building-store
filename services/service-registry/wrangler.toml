@@ -1,0 +1,14 @@
+name = "service-registry"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+
+# 使用 KV 存储服务注册信息
+[[kv_namespaces]]
+binding = "REGISTRY"
+id = "your-registry-kv-id"
+
+[env.production]
+name = "service-registry-prod"
+
+[env.development]
+name = "service-registry-dev"
